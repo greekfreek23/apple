@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Business Name Test</title>
+</head>
+<body>
+    <!-- The heading element you want to update -->
+    <h1 id="heading-d9iLaod9C">Default Business Name</h1>
+
+    <!-- Your script to fetch data and update the heading -->
+    <script>
+    (function() {
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\\[]/, '\\\\[').replace(/[\\]]/, '\\\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
+                results = regex.exec(window.location.search);
+            return results === null ? null : decodeURIComponent(results[1].replace(/\\+/g, ' '));
+        }
+
+        // Function to update the heading with the business name
+        async function updateBusinessName() {
+            try {
+                // Get the tracking ID from the URL parameter 'id'
+                var trackingId = getUrlParameter('id');
+                if (!trackingId) {
+                    console.error('No tracking ID specified in the URL.');
+                    return;
+                }
+
+                // Fetch the businesses.json file
+                var response = await fetch('businesses.json');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                var data = await response.json();
+
+                // Get the business name for the current tracking ID
+                var businessName = data[trackingId];
+                if (!businessName) {
+                    console.error('No business found for tracking ID:', trackingId);
+                    return;
+                }
+
+                // Update the heading element with the business name
+                var headingElement = document.getElementById('heading-d9iLaod9C');
+                if (headingElement) {
+                    headingElement.textContent = businessName;
+                } else {
+                    console.error('Element with ID #heading-d9iLaod9C not found.');
+                }
+            } catch (error) {
+                console.error('Error fetching or updating business data:', error);
+            }
+        }
+
+        // Call the update function after the page has loaded
+        window.addEventListener('DOMContentLoaded', updateBusinessName);
+    })();
+    </script>
+</body>
+</html>
